@@ -22,8 +22,7 @@ export default function Home() {
         <div className="hero-content">
           <Copy animateOnScroll={false} delay={isInitialLoad ? 4.85 : 0.75}>
             <div className="container">
-              <p>INTERACTIVE</p>
-              <p>WEB PUBLISHER</p>
+              <p className="hero-p">INTERACTIVE <br />WEB PUBLISHER</p>
             </div>
           </Copy>
         </div>
@@ -41,12 +40,11 @@ export default function Home() {
         </div>
 
         <div className="hero-logo">
-          <img src="/logo_ty.png" alt="" />
         </div>
       </section>
 
       <BlindingLight />
-
+      <Team />
       <section className="about">
         <Copy variant="flicker">
           <p className="mono">The Manifesto</p>
@@ -76,7 +74,7 @@ export default function Home() {
 
       <FeaturedProjects />
 
-      <Team />
+      
 
       <Footer />
     </>

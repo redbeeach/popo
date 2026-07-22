@@ -4,6 +4,7 @@
   height: 100svh;
   overflow: hidden;
   background-color: var(--base-200);
+  background-image: url("/noise-bg.png");
 }
 
 .team-header {

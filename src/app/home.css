@@ -2,19 +2,27 @@
   position: relative;
   width: 100%;
   height: 100dvh;
+  background-image: url("/noise-bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
 }
-
+ 
 .hero .fluorescent,
 .hero-content,
 .hero-footer,
 .hero-logo {
   will-change: transform;
 }
-
+.hero-content p{
+  font-size: 4.5rem;
+  line-height: 1;
+  color: var(--base-100);text-align: left !important;
+}
 .hero-logo {
   position: absolute;
   top: 50%;
@@ -33,7 +41,6 @@
 }
 
 .hero-footer p {
-  max-width: 20rem;
   margin: 0 auto;
 }
 

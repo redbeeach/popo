@@ -47,7 +47,7 @@ function parseSvgPath(d, steps = 32) {
     cx = 0,
     cy = 0;
   const tokens = d.match(
-    /[MmCcHhVvZz]|[-+]?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?/g,
+    /[MmLlCcHhVvZz]|[-+]?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?/g,
   );
   let i = 0;
   const num = () => parseFloat(tokens[i++]);
@@ -58,6 +58,14 @@ function parseSvgPath(d, steps = 32) {
         cx = num();
         cy = num();
         pts.push([cx, cy]);
+        break;
+      }
+      case "L": {
+        while (i < tokens.length && !/[A-Za-z]/.test(tokens[i])) {
+          cx = num();
+          cy = num();
+          pts.push([cx, cy]);
+        }
         break;
       }
       case "C": {
@@ -130,7 +138,9 @@ function buildLogoOccluder() {
     new THREE.Vector2(100, -100),
     new THREE.Vector2(-100, -100),
   ]);
-  shape.holes.push(new THREE.Path(toVec2(LOGO_SUBPATHS[0])));
+  for (const subpath of LOGO_SUBPATHS) {
+    shape.holes.push(new THREE.Path(toVec2(subpath)));
+  }
 
   const geo = new THREE.ShapeGeometry(shape);
   const mat = new THREE.MeshBasicMaterial({
@@ -139,19 +149,8 @@ function buildLogoOccluder() {
   });
   const occluderMesh = new THREE.Mesh(geo, mat);
 
-  const innerGroup = new THREE.Group();
-  for (let h = 1; h < LOGO_SUBPATHS.length; h++) {
-    const innerShape = new THREE.Shape(toVec2(LOGO_SUBPATHS[h]));
-    const innerGeo = new THREE.ShapeGeometry(innerShape);
-    const innerMat = new THREE.MeshBasicMaterial({ color: 0x080808 });
-    const innerMesh = new THREE.Mesh(innerGeo, innerMat);
-    innerMesh.position.z = 0.1;
-    innerGroup.add(innerMesh);
-  }
-
   const group = new THREE.Group();
   group.add(occluderMesh);
-  group.add(innerGroup);
   return group;
 }
 
@@ -364,6 +363,7 @@ const BlindingLight = () => {
       end: "+=300%",
       pin: true,
       scrub: 1.5,
+      refreshPriority: 3,
       onUpdate: (self) => applyScrollProgress(self.progress),
     });
 
@@ -389,7 +389,7 @@ const BlindingLight = () => {
   }, []);
 
   // dispose three.js resources after react unmounts pinned content
-  useLayoutEffect(() => {
+  useLayoutEffect(() => { 
     return () => {
       const instance = instanceRef.current;
       if (!instance) return;
@@ -412,14 +412,14 @@ const BlindingLight = () => {
   return (
     <section className="blinding-light" ref={blindingLightSectionRef}>
       <div className="blinding-light-header">
-        <p className="mono">Operational Since 2024</p>
-        <h5 className="type-2">We build worlds that refuse to let you go</h5>
+        <p className="mono">PORTFOLIO Since 2026</p>
+        <h5 className="type-2">I BUILD WEBSITES THAT ACTUALLY HOLD UP</h5>
       </div>
 
       <div className="blinding-light-footer">
         <div className="container">
-          <p className="mono">Signal Intercepted</p>
-          <p className="mono">Location Unknown</p>
+          <p className="mono">V2.0.26</p>
+          <p className="mono">LAST DEPLOY: TODAY</p>
         </div>
       </div>
       <div className="blinding-light-stage" ref={blindingLightContainerRef} />

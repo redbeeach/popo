@@ -100,7 +100,7 @@ export default function Team() {
       pinSpacing: true,
       scrub: true,
       invalidateOnRefresh: true,
-      refreshPriority: -1,
+      refreshPriority: 2,
       onUpdate: (self) => {
         positionCards(self.progress);
       },
@@ -121,10 +121,10 @@ export default function Team() {
     <section className="team" ref={sectionRef}>
       <div className="team-header">
         <Copy variant="flicker">
-          <p className="mono">The Collective</p>
+          <p className="mono">THE SKILLSET</p>
         </Copy>
         <Copy>
-          <h5 className="type-2">Behind The Lock</h5>
+          <h5 className="type-2">EVERY LAYER COVERED</h5>
         </Copy>
       </div>
 

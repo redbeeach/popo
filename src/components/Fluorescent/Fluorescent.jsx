@@ -47,7 +47,11 @@ const FRAGMENT_SHADER = `
     float mn = min(u_resolution.x, u_resolution.y);
 
     for(int j = 0; j < 40; j++) {
-      vec3 rayDir = normalize(vec3((2.0 * shifted - u_resolution) / mn, -1.0));
+      vec2 uv = (2.0 * shifted - u_resolution) / mn;
+      uv *= 0.28;
+      uv.y -= 0.7;
+
+      vec3 rayDir = normalize(vec3(uv, -1.0));
 
       vec3 p = z * rayDir;
       p.yz *= 0.1 * mat2(8.0, -6.0, 6.0, 8.0);
@@ -71,8 +75,8 @@ const FRAGMENT_SHADER = `
     O.rgb = mix(vec3(gray), O.rgb, 0.2);
 
     gl_FragColor = vec4(O.rgb, 1.0);
-  }
-`;
+  } 
+`; 
 
 const FLUORESCENT_RES_SCALE = 0.35;
 const FLUORESCENT_MAX_DPR = 2;

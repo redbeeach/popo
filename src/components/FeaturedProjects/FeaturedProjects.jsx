@@ -299,6 +299,7 @@ export default function FeaturedProjects() {
       pinSpacing: true,
       scrub: 1,
       invalidateOnRefresh: true,
+      refreshPriority: 1,
 
       onUpdate: (self) => {
         const imageProgress = calculateImageProgress(self.progress);
