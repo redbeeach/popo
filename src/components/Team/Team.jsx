@@ -13,29 +13,20 @@ gsap.registerPlugin(ScrollTrigger);
 
 const TEAM = [
   {
-    name: "Kai Tanaka",
-    role: "Creative Director",
-    img: "/team/team-1.jpg",
+    index: "[001]",
+    title: "GNUBOARD 5 / 7",
+    description:
+      "그누보드 기반 사이트를 5년 이상 다뤄온 만큼, PHP 커스터마이징부터 예약 시스템, 회원 관리까지 국내 호스팅 환경에 최적화된 풀스택 구축이 가능합니다.",
+    stat: "40+",
+    statLabel: "구축 및 커스터마이징 프로젝트",
   },
   {
-    name: "Lena Voss",
-    role: "Lead Sound Designer",
-    img: "/team/team-2.jpg",
-  },
-  {
-    name: "Erik Holm",
-    role: "Systems Architect",
-    img: "/team/team-3.jpg",
-  },
-  {
-    name: "Mara Chen",
-    role: "Art Director",
-    img: "/team/team-4.jpg",
-  },
-  {
-    name: "Sol Rieve",
-    role: "Narrative Designer",
-    img: "/team/team-5.jpg",
+    index: "[002]",
+    title: "SEO OPTIMIZATION",
+    description:
+      "의료·클리닉 등 민감 산업군(YMYL) 사이트의 검색 노출을 다수 개선한 경험을 바탕으로, 구조화 데이터부터 리디렉션 설계까지 실질적인 검색 성과를 만듭니다.",
+    stat: "E-E-A-T",
+    statLabel: "기준 콘텐츠 설계",
   },
 ];
 
@@ -43,54 +34,37 @@ export default function Team() {
   const sectionRef = useRef(null);
   const cardsRef = useRef([]);
 
-  // pin section and arc cards along scroll progress
+  // pin section and slide cards in a straight horizontal line
   useLayoutEffect(() => {
     const section = sectionRef.current;
     const cards = cardsRef.current;
     if (!section || !cards.length) return;
 
-    const stickyHeight = window.innerHeight * 7;
-    const totalCards = cards.length;
+    const stickyHeight = window.innerHeight * 5;
 
-    const arcAngle = Math.PI * 0.4;
-    const startAngle = Math.PI / 2 - arcAngle / 2;
-
-    function getRadius() {
-      return window.innerWidth < 900
-        ? window.innerWidth * 7.5
-        : window.innerWidth * 2.5;
-    }
-
-    // position each card on the arc for a given scroll progress
     function positionCards(progress = 0) {
-      const radius = getRadius();
-      const cardSpacing = 0.15;
-      const initialOffset = -cardSpacing * (totalCards - 1);
-      const totalTravel = 1 - initialOffset;
-      const arcProgress = initialOffset + progress * totalTravel;
+      const isMobile = window.innerWidth < 900;
+      const cardSpacing = isMobile ? 320 : 560;
+      const startX = window.innerWidth * 0.72;
+      const travel = window.innerWidth + cardSpacing * cards.length;
+      const topRowY = isMobile ? -120 : -170;
+      const bottomRowY = isMobile ? 80 : 120;
 
       cards.forEach((card, i) => {
         if (!card) return;
-        const cardOffset = (totalCards - 1 - i) * cardSpacing;
-        const cardProgress = cardOffset + arcProgress;
-        const angle = startAngle + arcAngle * cardProgress;
-
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
-        const rotation = (angle - Math.PI / 2) * (180 / Math.PI);
+        const x = startX + i * cardSpacing - progress * travel;
+        const y = i % 2 === 0 ? topRowY : bottomRowY;
 
         gsap.set(card, {
           x,
-          y: -y + radius,
-          rotation: -rotation,
+          y,
+          rotation: 0,
           transformOrigin: "center center",
         });
       });
     }
 
     positionCards(0);
-
-    const proxy = { progress: 0 };
 
     const trigger = ScrollTrigger.create({
       trigger: section,
@@ -138,16 +112,20 @@ export default function Team() {
       <div className="cards">
         {TEAM.map((member, i) => (
           <div
-            key={member.name}
+            key={member.title}
             className="card"
             ref={(el) => (cardsRef.current[i] = el)}
           >
-            <div className="card-img">
-              <img src={member.img} alt={member.name} />
-            </div>
             <div className="card-content">
-              <p className="lg">{member.name}</p>
-              <p className="mono">{member.role}</p>
+              <div className="card-heading">
+                <p className="mono card-index">{member.index}</p>
+                <h3>{member.title}</h3>
+              </div>
+              <p className="card-description">{member.description}</p>
+              <div className="card-stat">
+                <p>{member.stat}</p>
+                <span>{member.statLabel}</span>
+              </div>
             </div>
           </div>
         ))}
