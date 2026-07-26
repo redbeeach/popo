@@ -8,6 +8,10 @@
   align-items: center;
   padding: 2rem;
   background-color: var(--base-300);
+  background-image: url("/noise-bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
   will-change: clip-path;
   overflow: hidden;
@@ -21,7 +25,7 @@
   font-weight: 450;
   line-height: 1;
   letter-spacing: -2%;
-  text-transform: uppercase;
+  text-transform: uppercase; 
 }
 
 .preloader-revealer {

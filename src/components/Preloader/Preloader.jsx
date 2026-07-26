@@ -19,7 +19,7 @@ const HERO_ENTER_DURATION = 1.25;
 // query hero elements needed for the enter animation
 function getHeroElements() {
   return {
-    fluorescent: document.querySelector(".hero .fluorescent"),
+    fluorescent: document.querySelector(".home-page > .fluorescent"),
     content: document.querySelector(".hero-content"),
     footer: document.querySelector(".hero-footer"),
     logo: document.querySelector(".hero-logo"),

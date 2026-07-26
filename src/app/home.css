@@ -1,27 +1,40 @@
+.home-page {
+  position: relative;
+  min-height: 100svh;
+  background-color: var(--base-300);
+  isolation: isolate;
+}
+
+.home-page > .fluorescent {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100vw;
+  height: 100svh;
+  pointer-events: none;
+}
+
 .hero {
   position: relative;
+  z-index: 1;
   width: 100%;
   height: 100dvh;
-  background-image: url("/noise-bg.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background: transparent;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; 
   overflow: hidden;
 }
  
-.hero .fluorescent,
 .hero-content,
 .hero-footer,
 .hero-logo {
   will-change: transform;
 }
 .hero-content p{
-  font-size: 4.5rem;
+  font-size: 5.5rem;
   line-height: 1;
-  color: var(--base-100);text-align: left !important;
+  color: var(--base-100);text-align: left !important;font-weight:700;
 }
 .hero-logo {
   position: absolute;
@@ -58,18 +71,206 @@
   padding: 2.25rem;
 }
 
+.blinding-intro {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 62svh;
+  display: flex;
+  align-items: flex-end;
+  background-color: transparent;
+  color: var(--base-100);
+  overflow: hidden;
+}
+
+.blinding-intro .container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 7rem 2.25rem 3.5rem;
+}
+
+.blinding-intro-title {
+  width: 100%;
+  text-align: center;
+  font-size: clamp(5rem, 15vw, 17rem);
+  font-weight: 700;
+  line-height: 0.78;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.blinding-light-intro {
+  min-height: 54svh;
+}
+
 .about {
   position: relative;
+  z-index: 1;
   width: 100%;
-  min-height: 100svh;
-  padding: 10rem 0;
-  background-color: var(--base-200);
+  height: 540svh;
+  padding: 0;
+  background-color: var(--base-300);
   color: var(--base-100);
+  overflow: visible;
+}
+
+.about-sticky {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100svh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 2rem;
+  overflow: hidden;
+  background-color: var(--base-300);
+  will-change: transform;
+}
+
+.about-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  will-change: transform, opacity;
+}
+
+.about-panel {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #080808;
+  overflow: hidden;
+  box-shadow: 0 2.5rem 5rem rgba(0, 0, 0, 0.55);
+  will-change: transform, border-radius;
+}
+
+.about-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 7rem 7rem;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.about-panel-inner {
+  position: relative;
+  z-index: 1;
+  width: min(86rem, calc(100% - 4.5rem));
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  will-change: transform, opacity;
+}
+
+.about-experience-list {
+  position: absolute;
+  will-change: transform, opacity;
+}
+
+.about-panel-inner > [data-copy-slide] {
+  position: absolute;
+  top: 17svh;
+  left: 0;
+}
+
+.about-panel-kicker {
+  margin-bottom: 0;
+  color: rgba(247, 245, 240, 0.68);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.about-experience-list {
+  top: 17svh;
+  right: 0;
+  width: min(58rem, 68%);
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+}
+
+.about-experience-item {
+  display: grid;
+  grid-template-columns: 4rem 11rem minmax(0, 1fr);
+  gap: 2rem;
+  padding-top: 1.7rem;
+  border-top: 1px solid rgba(247, 245, 240, 0.18);
+  will-change: transform, opacity;
+}
+
+.about-experience-item > [data-copy-slide] {
+  min-width: 0;
+}
+
+.about-experience-index,
+.about-experience-period {
+  color: rgba(247, 245, 240, 0.46);
+  white-space: nowrap;
+}
+
+.about-experience-item h5 {
+  margin: 0 0 0.85rem;
+  padding: 0;
+  font-family: var(--type-kr);
+  font-size: clamp(1.2rem, 2vw, 2.35rem);
+  font-weight: 500;
+  line-height: 1;
+  word-break: keep-all;
+}
+
+.about-experience-role {
+  font-family: var(--type-kr);
+  color: var(--base-100);
+  font-size: clamp(0.95rem, 1.35vw, 1.35rem);
+  font-weight: 400;
+  line-height: 1.15;
+  word-break: keep-all;
+}
+
+.about-experience-desc {
+  width: min(33rem, 100%);
+  margin-top: 1.65rem;
+  padding-left: 0;
+  list-style: none;
+  font-family: var(--type-kr);
+  color: rgba(247, 245, 240, 0.58);
+  font-size: 0.88rem;
+  font-weight: 400;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+.about-experience-desc li {
+  position: relative;
+  padding-left: 1rem;
+  font-weight: 100;
+}
+
+.about-experience-desc li + li {
+  margin-top: 0.55rem;
+}
+
+.about-experience-desc li::before {
+  content: "-";
+  position: absolute;
+  left: 0;
+  color: rgba(247, 245, 240, 0.42);
 }
 
 .about p.mono {
@@ -84,8 +285,27 @@
   width: 45%;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 4.25rem;
   text-align: center;
+}
+
+.about-intro-title {
+  font-family: var(--type-kr);
+  font-size: clamp(1.45rem, 2.45vw, 3.35rem);
+  font-weight: 300;
+  line-height: 1.08;
+  margin: 2rem 0 0;
+  word-break: keep-all;
+}
+
+.about-intro-desc {
+  font-family: var(--type-kr);
+  color: rgba(247, 245, 240, 0.68);
+  font-size: clamp(0.92rem, 1.12vw, 1.12rem);
+  font-weight: 300;
+  line-height: 1.65;
+  margin: 0 0 2rem;
+  word-break: keep-all;
 }
 
 @media (max-width: 1000px) {
@@ -97,7 +317,44 @@
     display: none;
   }
 
+  .blinding-intro {
+    min-height: 48svh;
+  }
+
+  .blinding-intro .container {
+    padding: 4rem 1rem 2rem;
+  }
+
+  .blinding-intro-title {
+    font-size: clamp(3.2rem, 18vw, 7rem);
+  }
+
   .about .about-copy .container {
     width: 100%;
+  }
+
+  .about-panel-inner {
+    width: calc(100% - 2rem);
+  }
+
+  .about-experience-list {
+    top: 15svh;
+    right: 1rem;
+    width: calc(100% - 2rem);
+    gap: 2rem;
+  }
+
+  .about-experience-item {
+    grid-template-columns: 2rem 7.5rem minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .about-panel-inner > [data-copy-slide] {
+    top: 7svh;
+    left: 1rem;
+  }
+
+  .about-panel-kicker {
+    font-size: 1rem;
   }
 }

@@ -69,10 +69,10 @@ const FRAGMENT_SHADER = `
 
     float luminance = dot(O.rgb, vec3(0.299, 0.587, 0.114));
     float bright = luminance * 1.4;
-    O.rgb = vec3(bright * 0.15, bright * 0.9, bright * 0.1);
+    O.rgb = vec3(bright * 0.42, bright * 0.08, bright * 0.72);
 
     float gray = dot(O.rgb, vec3(0.299, 0.587, 0.114));
-    O.rgb = mix(vec3(gray), O.rgb, 0.2);
+    O.rgb = mix(vec3(gray * 0.12), O.rgb, 0.62);
 
     gl_FragColor = vec4(O.rgb, 1.0);
   } 

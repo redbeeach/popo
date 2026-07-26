@@ -6,6 +6,8 @@ import { useEffect, useRef } from "react";
 
 import gsap from "gsap";
 
+import Copy from "../Copy/Copy";
+
 const DEFAULT_CONFIG = {
   cubeSize: 0.75,
   bgColor: "#0b0b0b",
@@ -523,10 +525,14 @@ export default function Footer({
       <div className="footer-content">
         <div className="container">
           <div className="footer-heading">
-            <p className="mono">Establish Contact</p>
-            <h2 className="type-2">
-              Let's Make Something They Can't Walk Away From
-            </h2>
+            <Copy trigger=".smoke-footer">
+              <p className="mono">Establish Contact</p>
+            </Copy>
+            <Copy trigger=".smoke-footer">
+              <h2 className="type-2">
+                Let's Make Something They Can't Walk Away From
+              </h2>
+            </Copy>
           </div>
         </div>
       </div>
@@ -534,10 +540,14 @@ export default function Footer({
       <div className="footer-bar">
         <div className="container">
           <div className="footer-bar-left">
-            <p className="mono">&copy; 2025 Deadlock Inc.</p>
+            <Copy trigger=".smoke-footer">
+              <p className="mono">&copy; 2025 Deadlock Inc.</p>
+            </Copy>
           </div>
           <div className="footer-bar-right">
-            <p className="mono">Developed By Codegrid</p>
+            <Copy trigger=".smoke-footer">
+              <p className="mono">Developed By Codegrid</p>
+            </Copy>
           </div>
         </div>
       </div>

@@ -141,10 +141,11 @@ export default function Copy({
   animateOnScroll = true,
   delay = 0,
   stagger = null,
-  type = "lines",
+  type = "chars",
   trigger = null,
   triggerPoint = null,
   start = null,
+  end = null,
 }) {
   const containerRef = useRef(null);
   const splitInstanceRefs = useRef([]);
@@ -213,7 +214,9 @@ export default function Copy({
 
         const isScramble = variant === "flicker";
         const resolvedStart = start ?? (isScramble ? "top 85%" : "top 80%");
-        const resolvedStagger = stagger ?? (isScramble ? 0.1 : 0.05);
+        const resolvedEnd = end ?? "bottom 45%";
+        const resolvedStagger =
+          stagger ?? (isScramble ? 0.1 : type === "chars" ? 0.012 : 0.05);
 
         const triggerElement = resolveTriggerElement(
           triggerPoint ?? trigger,
@@ -266,7 +269,12 @@ export default function Copy({
             const split = splitInstanceRefs.current[index];
             if (!split) return;
 
-            const units = type === "words" ? split.words : split.lines;
+            const units =
+              type === "lines"
+                ? split.lines
+                : type === "words"
+                  ? split.words
+                  : split.chars;
             preserveTextIndent(element, units);
             allUnits.push(...units);
           });
@@ -276,24 +284,38 @@ export default function Copy({
             return;
           }
 
-          gsap.set(allUnits, { yPercent: 110 });
+          gsap.set(allUnits, {
+            yPercent: 115,
+            opacity: 0,
+            rotateX: -38,
+            transformOrigin: "50% 100%",
+          });
           setSlideReady(true);
 
           combinedTweenRef.current = gsap.to(allUnits, {
             yPercent: 0,
-            duration: 0.75,
-            ease: "power3.out",
-            delay,
+            opacity: 1,
+            rotateX: 0,
+            duration: 1,
+            ease: animateOnScroll ? "none" : "power3.out",
+            delay: animateOnScroll ? 0 : delay,
             stagger: resolvedStagger,
             paused: animateOnScroll,
           });
 
-          attachScrollTrigger(scrollTriggerRefs, {
-            animateOnScroll,
-            triggerElement,
-            start: resolvedStart,
-            animation: combinedTweenRef.current,
-          });
+          if (animateOnScroll) {
+            const scrollTrigger = ScrollTrigger.create({
+              trigger: triggerElement,
+              start: resolvedStart,
+              end: resolvedEnd,
+              animation: combinedTweenRef.current,
+              scrub: 0.75,
+              invalidateOnRefresh: true,
+              refreshPriority: -1,
+            });
+
+            scrollTriggerRefs.current.push(scrollTrigger);
+          }
         };
 
         // create splittext instances with auto-split rebuild on resize
@@ -303,21 +325,26 @@ export default function Copy({
           splitInstanceRefs.current.forEach((split) => split?.revert());
           splitInstanceRefs.current = [];
 
-          const isWordSplit = type === "words";
+          const splitType =
+            type === "lines" || type === "words" || type === "chars"
+              ? type
+              : "chars";
 
           targetElements.forEach((element) => {
             const split = SplitText.create(element, {
-              type: isWordSplit ? "words" : "lines",
-              mask: isWordSplit ? "words" : "lines",
-              autoSplit: true,
-              ...(isWordSplit
+              type: splitType,
+              mask: splitType,
+              ...(splitType === "words"
                 ? { wordsClass: "word" }
-                : { linesClass: "line", lineThreshold: 0.1 }),
-              onSplit: () => scheduleCombinedRebuild(runCombinedAnimation),
+                : splitType === "lines"
+                  ? { linesClass: "line", lineThreshold: 0.1 }
+                  : { charsClass: "char" }),
             });
 
             splitInstanceRefs.current.push(split);
           });
+
+          scheduleCombinedRebuild(runCombinedAnimation);
         };
 
         createSplits();
@@ -341,6 +368,7 @@ export default function Copy({
         trigger,
         triggerPoint,
         start,
+        end,
       ],
     },
   );

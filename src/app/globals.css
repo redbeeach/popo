@@ -4,6 +4,7 @@
   --type-1: "Verilet", sans-serif;
   --type-2: "Cossette Titre", sans-serif;
   --type-3: "SUSE Mono", monospace;
+  --type-kr: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 
   --base-100: #f7f5f0;
   --base-200: #272a2a;
@@ -79,7 +80,7 @@ h3.type-1,
 h4.type-1,
 h5.type-1,
 h6.type-1 {
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: -5%;
   padding: 0 0.75rem;
   line-height: 0.6;
@@ -115,7 +116,7 @@ h3.type-2,
 h4.type-2,
 h5.type-2,
 h6.type-2 {
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: -3%;
   padding: 0 0.5rem;
   line-height: 0.9;

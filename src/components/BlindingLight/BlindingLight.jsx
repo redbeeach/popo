@@ -14,6 +14,7 @@ import {
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import Copy from "../Copy/Copy";
 import { LOGO_PATH_D, LOGO_SVG_W, LOGO_SVG_H } from "./logoPath";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -252,11 +253,14 @@ const BlindingLight = () => {
     camera.position.set(0, 0, 20);
 
     const renderer = new THREE.WebGLRenderer({
+      alpha: true,
+      premultipliedAlpha: false,
       powerPreference: "high-performance",
       antialias: true,
       stencil: false,
       depth: false,
     });
+    renderer.setClearColor(0x000000, 0);
     renderer.setSize(width, height);
     renderer.setPixelRatio(window.devicePixelRatio);
     container.replaceChildren();
@@ -363,7 +367,7 @@ const BlindingLight = () => {
       end: "+=300%",
       pin: true,
       scrub: 1.5,
-      refreshPriority: 3,
+      refreshPriority: 2,
       onUpdate: (self) => applyScrollProgress(self.progress),
     });
 
@@ -412,14 +416,22 @@ const BlindingLight = () => {
   return (
     <section className="blinding-light" ref={blindingLightSectionRef}>
       <div className="blinding-light-header">
-        <p className="mono">PORTFOLIO Since 2026</p>
-        <h5 className="type-2">I BUILD WEBSITES THAT ACTUALLY HOLD UP</h5>
+        <Copy trigger=".blinding-light" start="top 70%">
+          <p className="mono">PORTFOLIO Since 2026</p>
+        </Copy>
+        <Copy trigger=".blinding-light" start="top 70%">
+          <h5 className="type-2">I BUILD WEBSITES THAT ACTUALLY HOLD UP</h5>
+        </Copy>
       </div>
 
       <div className="blinding-light-footer">
         <div className="container">
-          <p className="mono">V2.0.26</p>
-          <p className="mono">LAST DEPLOY: TODAY</p>
+          <Copy trigger=".blinding-light" start="top 70%">
+            <p className="mono">V2.0.26</p>
+          </Copy>
+          <Copy trigger=".blinding-light" start="top 70%">
+            <p className="mono">LAST DEPLOY: TODAY</p>
+          </Copy>
         </div>
       </div>
       <div className="blinding-light-stage" ref={blindingLightContainerRef} />
