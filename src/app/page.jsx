@@ -8,7 +8,6 @@ import BlindingLight from "@/components/BlindingLight/BlindingLight";
 import Copy from "@/components/Copy/Copy";
 import FeaturedProjects from "@/components/FeaturedProjects/FeaturedProjects";
 import Fluorescent from "@/components/Fluorescent/Fluorescent";
-import Footer from "@/components/Footer/Footer";
 import Preloader, { isInitialLoad } from "@/components/Preloader/Preloader";
 import ScrollRevealTitle from "@/components/ScrollRevealTitle/ScrollRevealTitle";
 import Team from "@/components/Team/Team";
@@ -62,7 +61,7 @@ const EXPERIENCE_ITEMS = [
     company: "모든세븐",
     role: "웹에이전시 / 개발팀 대리",
     description: [
-      "쇼핑몰, 기업, 학교 등 다양한 업종 홈페이지 그누보드(CMS) 기반 기획~퍼블리싱 담당",
+      "쇼핑몰, 기업, 학교 등 다양한 업종 홈페이지 그누보드(CMS) 기반 퍼블리싱,개발 담당",
       "클라이언트 커뮤니케이션 및 요구사항 정리, 오픈 후 유지보수·신규 기능 개발 전담",
       "가비아, 카페24 등 호스팅 환경 서버 세팅~배포 진행, HTML/CSS/JS 퍼블리싱 및 PHP·MySQL 기반 백엔드 기능(게시판, 회원관리 등) 개발",
     ],
@@ -72,7 +71,7 @@ const EXPERIENCE_ITEMS = [
     company: "파인애플피티엘",
     role: "웹에이전시 / 개발팀 주임(파트장)",
     description: [
-      "병원 특화 도메인으로 전환, 그누보드5 기반 병원별 맞춤형 예약·상담 시스템 설계 및 반응형(PC/Tablet/Mobile) UI 아키텍처 총괄",
+      "병원 특화 홈페이지 제작, 그누보드5 기반 병원별 맞춤형 예약·상담 시스템 설계 및 반응형(PC/Tablet/Mobile) UI 아키텍처 총괄",
       "GSAP·Swiper.js 기반 인터랙티브 UI/애니메이션 구현으로 병원 브랜드별 차별화된 사용자 경험 설계 — GD Web Awards 다수 수상",
       "Open Graph, 웹 표준·접근성 가이드라인 도입해 검색 노출 및 SNS 공유 품질 개선 — 단순 퍼블리싱을 넘어 SEO 관점의 구조 개선 주도",
       "노후화된 레거시 홈페이지 다수의 코드 구조 리팩토링 및 유지보수 프로세스 체계화(문서화·히스토리 관리) 정립",
@@ -295,10 +294,6 @@ export default function Home() {
 
 
       <FeaturedProjects />
-
-      
-
-      <Footer />
     </main>
   );
 }

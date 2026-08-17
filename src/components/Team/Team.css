@@ -21,6 +21,7 @@
 }
 
 .team-footer {
+  display: none;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -102,10 +103,7 @@
 }
 
 .card-stat {
-  display: grid;
-  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
-  align-items: center;
-  gap: 1.35rem;
+  display: block;
 }
 
 .card-stat p {

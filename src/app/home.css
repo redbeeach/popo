@@ -289,13 +289,19 @@
   text-align: center;
 }
 
-.about-intro-title {
+h6.type-2.about-intro-title {
   font-family: var(--type-kr);
   font-size: clamp(1.45rem, 2.45vw, 3.35rem);
   font-weight: 300;
-  line-height: 1.08;
+  line-height: 1.1;
   margin: 2rem 0 0;
   word-break: keep-all;
+}
+
+h6.type-2.about-intro-title .line,
+h6.type-2.about-intro-title .word,
+h6.type-2.about-intro-title .char {
+  line-height: inherit;
 }
 
 .about-intro-desc {

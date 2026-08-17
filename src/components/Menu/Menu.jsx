@@ -11,6 +11,10 @@ import { useLenis } from "lenis/react";
 
 import { MENU_CLOSE_EVENT } from "@/utils/menuClose";
 import { scrambleIn, scrambleVisible } from "./scramble";
+import {
+  revertScrambleInstance as revertNavScrambleInstance,
+  scrambleVisible as scrambleNavVisible,
+} from "@/utils/scramble";
 
 // normalize pathname for same-route link detection
 const menuNormalizePath = (path) => {
@@ -29,6 +33,8 @@ const Menu = () => {
   const hamburgerTl = useRef(null);
   const isMenuOpen = useRef(false);
   const hoverCleanups = useRef([]);
+  const navHoverCleanups = useRef([]);
+  const navHoverSplits = useRef(new Map());
 
   // clear scramble timers on all overlay elements
   const menuClearScrambleTimers = () => {
@@ -72,6 +78,51 @@ const Menu = () => {
   const menuRemoveHoverListeners = () => {
     hoverCleanups.current.forEach((cleanup) => cleanup());
     hoverCleanups.current = [];
+  };
+
+  const menuRemoveNavHoverListeners = () => {
+    navHoverCleanups.current.forEach((cleanup) => cleanup());
+    navHoverCleanups.current = [];
+    navHoverSplits.current.forEach(revertNavScrambleInstance);
+    navHoverSplits.current.clear();
+  };
+
+  const menuAddNavHoverEffects = () => {
+    const nav = navRef.current;
+    if (!nav || window.innerWidth < 1000) return;
+
+    menuRemoveNavHoverListeners();
+
+    const links = nav.querySelectorAll(".nav-hover-scramble");
+    links.forEach((link) => {
+      let animating = false;
+
+      const onEnter = () => {
+        if (animating) return;
+        animating = true;
+
+        const previous = navHoverSplits.current.get(link);
+        if (previous) revertNavScrambleInstance(previous);
+
+        const split = scrambleNavVisible(link, 0, {
+          duration: 0.1,
+          charDelay: 25,
+          stagger: 10,
+          maxIterations: 5,
+        });
+
+        if (split) navHoverSplits.current.set(link, split);
+
+        setTimeout(() => {
+          animating = false;
+        }, 250);
+      };
+
+      link.addEventListener("mouseenter", onEnter);
+      navHoverCleanups.current.push(() => {
+        link.removeEventListener("mouseenter", onEnter);
+      });
+    });
   };
 
   // attach scramble-on-hover to nav links (desktop only)
@@ -221,6 +272,7 @@ const Menu = () => {
     );
 
     hamburgerTl.current = tl;
+    menuAddNavHoverEffects();
 
     const overlay = overlayRef.current;
     if (overlay) {
@@ -239,6 +291,7 @@ const Menu = () => {
       lenis?.off("scroll", updateNavTopClass);
       tl.kill();
       menuRemoveHoverListeners();
+      menuRemoveNavHoverListeners();
     };
   }, [lenis]);
 
@@ -306,31 +359,72 @@ const Menu = () => {
       <nav ref={navRef} className="top">
         <div className="container">
           <div className="nav-container">
-            <div className="nav-cta">
-              <Link
-                href="/connect"
-                className="btn"
-                onClickCapture={(e) => menuHandleLinkClick(e, "/connect")}
-              >
-                <span className="mono">Connect</span>
-              </Link>
-            </div>
-            <div className="nav-logo">
+            <div className="nav-brand">
               <Link
                 href="/"
                 onClickCapture={(e) => menuHandleLinkClick(e, "/")}
               >
-                <img src="/logo.png" alt="" />
+                <span className="mono nav-brand-full">
+                  YUN
+                  <br />
+                  HONG BI
+                  <br />
+                  PORTFOLIO
+                </span>
+                <span className="mono nav-brand-compact">/R</span>
               </Link>
             </div>
-            <div className="nav-toggler">
-              <div className="btn" onClick={menuHandleToggle}>
-                <p className="mono">Menu</p>
+
+            <div className="nav-links">
+              <Link
+                className="mono nav-hover-scramble"
+                href="/"
+                onClickCapture={(e) => menuHandleLinkClick(e, "/")}
+              >
+                [ INDEX ]
+              </Link>
+              <Link
+                className="mono nav-hover-scramble"
+                href="/studio"
+                onClickCapture={(e) => menuHandleLinkClick(e, "/studio")}
+              >
+                [ STUDIO ]
+              </Link>
+              <Link
+                className="mono nav-hover-scramble"
+                href="/catalog"
+                onClickCapture={(e) => menuHandleLinkClick(e, "/catalog")}
+              >
+                [ CATALOG ]
+              </Link>
+              <Link
+                className="mono nav-hover-scramble"
+                href="/brief"
+                onClickCapture={(e) => menuHandleLinkClick(e, "/brief")}
+              >
+                [ BRIEF ]
+              </Link>
+            </div>
+
+            <div className="nav-actions">
+              <Link
+                href="/connect"
+                className="mono nav-connect nav-hover-scramble"
+                onClickCapture={(e) => menuHandleLinkClick(e, "/connect")}
+              >
+                [ CONNECT ]
+              </Link>
+              <button
+                className="nav-toggler"
+                type="button"
+                onClick={menuHandleToggle}
+              >
+                <p className="mono nav-hover-scramble">[ MENU ]</p>
                 <div className="nav-toggler-hamburger">
                   <span></span>
                   <span></span>
                 </div>
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -343,7 +437,7 @@ const Menu = () => {
           </div>
           <div className="nav-item active">
             <Link href="/" onClickCapture={(e) => menuHandleLinkClick(e, "/")}>
-              Index
+              [ INDEX ]
             </Link>
           </div>
           <div className="nav-item">
@@ -351,7 +445,7 @@ const Menu = () => {
               href="/studio"
               onClickCapture={(e) => menuHandleLinkClick(e, "/studio")}
             >
-              Studio
+              [ STUDIO ]
             </Link>
           </div>
           <div className="nav-item">
@@ -359,7 +453,7 @@ const Menu = () => {
               href="/catalog"
               onClickCapture={(e) => menuHandleLinkClick(e, "/catalog")}
             >
-              Catalog
+              [ CATALOG ]
             </Link>
           </div>
           <div className="nav-item">
@@ -367,7 +461,7 @@ const Menu = () => {
               href="/brief"
               onClickCapture={(e) => menuHandleLinkClick(e, "/brief")}
             >
-              Brief
+              [ BRIEF ]
             </Link>
           </div>
           <div className="nav-item">
@@ -375,7 +469,7 @@ const Menu = () => {
               href="/connect"
               onClickCapture={(e) => menuHandleLinkClick(e, "/connect")}
             >
-              Connect
+              [ CONNECT ]
             </Link>
           </div>
         </div>
@@ -389,14 +483,14 @@ const Menu = () => {
                   href="https://www.instagram.com/codegridweb/"
                   target="_blank"
                 >
-                  Feed
+                  [ FEED ]
                 </a>
                 <a
                   className="mono"
                   href="https://www.youtube.com/@codegrid"
                   target="_blank"
                 >
-                  Channel
+                  [ CHANNEL ]
                 </a>
               </div>
               <div className="nav-footer-item">
@@ -405,7 +499,7 @@ const Menu = () => {
                   href="/contact"
                   onClickCapture={(e) => menuHandleLinkClick(e, "/contact")}
                 >
-                  Get In Touch
+                  [ GET IN TOUCH ]
                 </Link>
               </div>
             </div>

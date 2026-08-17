@@ -53,6 +53,7 @@ export default function ClientLayout({ children }) {
   const pathname = usePathname();
   const pageRef = useRef(null);
   const pageWrapperRef = useRef(null);
+  const noiseRef = useRef(null);
   const lenisRef = useRef(null);
 
   const [isMobile, setIsMobile] = useState(false);
@@ -106,10 +107,52 @@ export default function ClientLayout({ children }) {
 
   const lenisOptions = isMobile ? LENIS_MOBILE : LENIS_DESKTOP;
 
+  useEffect(() => {
+    const noise = noiseRef.current;
+    if (!noise) return;
+
+    const current = { x: 0, y: 0 };
+    const target = { x: 0, y: 0 };
+    let rafId = 0;
+
+    function animateNoise() {
+      current.x += (target.x - current.x) * 0.075;
+      current.y += (target.y - current.y) * 0.075;
+      noise.style.setProperty("--noise-x", `${current.x.toFixed(2)}px`);
+      noise.style.setProperty("--noise-y", `${current.y.toFixed(2)}px`);
+      rafId = requestAnimationFrame(animateNoise);
+    }
+
+    function handlePointerMove(event) {
+      const x = (event.clientX / window.innerWidth - 0.5) * 42;
+      const y = (event.clientY / window.innerHeight - 0.5) * 42;
+      target.x = x;
+      target.y = y;
+    }
+
+    function handlePointerLeave() {
+      target.x = 0;
+      target.y = 0;
+    }
+
+    window.addEventListener("pointermove", handlePointerMove, {
+      passive: true,
+    });
+    window.addEventListener("pointerleave", handlePointerLeave);
+    rafId = requestAnimationFrame(animateNoise);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerleave", handlePointerLeave);
+    };
+  }, []);
+
   // app shell with smooth scroll, menu, and page transitions
   return (
     <ReactLenis root ref={lenisRef} options={lenisOptions}>
       <div className="page" ref={pageRef}>
+        <div className="noise-overlay" ref={noiseRef} />
         <Menu />
         <TransitionProvider>
           <div className="page-wrapper" ref={pageWrapperRef}>

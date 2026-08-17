@@ -424,16 +424,6 @@ const BlindingLight = () => {
         </Copy>
       </div>
 
-      <div className="blinding-light-footer">
-        <div className="container">
-          <Copy trigger=".blinding-light" start="top 70%">
-            <p className="mono">V2.0.26</p>
-          </Copy>
-          <Copy trigger=".blinding-light" start="top 70%">
-            <p className="mono">LAST DEPLOY: TODAY</p>
-          </Copy>
-        </div>
-      </div>
       <div className="blinding-light-stage" ref={blindingLightContainerRef} />
     </section>
   );

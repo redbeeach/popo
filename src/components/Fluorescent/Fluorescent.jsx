@@ -17,6 +17,11 @@ const FRAGMENT_SHADER = `
 
   uniform vec2 u_resolution;
   uniform float u_time;
+  uniform vec2 u_trail0;
+  uniform vec2 u_trail1;
+  uniform vec2 u_trail2;
+  uniform vec2 u_trail3;
+  uniform vec4 u_trailPower;
 
   float tanh_f(float x) {
     float e2x = exp(2.0 * x);
@@ -25,6 +30,21 @@ const FRAGMENT_SHADER = `
 
   vec4 tanh_v4(vec4 x) {
     return vec4(tanh_f(x.x), tanh_f(x.y), tanh_f(x.z), tanh_f(x.w));
+  }
+
+  vec2 wake_distort(vec2 pixel, vec2 trail, float power, vec2 resolution) {
+    vec2 fragUv = pixel / resolution;
+    vec2 trailUv = trail * 0.5 + 0.5;
+    vec2 delta = fragUv - trailUv;
+    delta.x *= resolution.x / resolution.y;
+
+    float d = length(delta);
+    float core = exp(-d * d * 24.0) * power;
+    float ripple = sin(d * 46.0 - u_time * 6.5) * exp(-d * 5.6) * power;
+    vec2 dir = normalize(delta + vec2(0.0001));
+    vec2 tangent = vec2(-dir.y, dir.x);
+
+    return (dir * core * 0.085 + tangent * ripple * 0.034) * min(resolution.x, resolution.y);
   }
 
   void main() {
@@ -44,6 +64,10 @@ const FRAGMENT_SHADER = `
 
     float yOffset = aspect < 1.0 ? (1.0 - aspect) * 1.75 : 0.0;
     vec2 shifted = vec2(I.x, I.y - yOffset * u_resolution.y);
+    shifted += wake_distort(I, u_trail0, u_trailPower.x, u_resolution);
+    shifted += wake_distort(I, u_trail1, u_trailPower.y, u_resolution);
+    shifted += wake_distort(I, u_trail2, u_trailPower.z, u_resolution);
+    shifted += wake_distort(I, u_trail3, u_trailPower.w, u_resolution);
     float mn = min(u_resolution.x, u_resolution.y);
 
     for(int j = 0; j < 40; j++) {
@@ -69,10 +93,10 @@ const FRAGMENT_SHADER = `
 
     float luminance = dot(O.rgb, vec3(0.299, 0.587, 0.114));
     float bright = luminance * 1.4;
-    O.rgb = vec3(bright * 0.42, bright * 0.08, bright * 0.72);
+    O.rgb = vec3(bright * 0.95, bright * 0.04, bright * 0.10);
 
     float gray = dot(O.rgb, vec3(0.299, 0.587, 0.114));
-    O.rgb = mix(vec3(gray * 0.12), O.rgb, 0.62);
+    O.rgb = mix(vec3(gray * 0.1), O.rgb, 0.7);
 
     gl_FragColor = vec4(O.rgb, 1.0);
   } 
@@ -83,6 +107,10 @@ const FLUORESCENT_MAX_DPR = 2;
 
 function fluorescent_getDpr() {
   return Math.min(window.devicePixelRatio || 1, FLUORESCENT_MAX_DPR);
+}
+
+function fluorescent_clamp(min, max, value) {
+  return Math.max(min, Math.min(max, value));
 }
 
 function fluorescent_createShader(gl, type, source) {
@@ -117,6 +145,10 @@ export default function Fluorescent({ className = "" }) {
   const fluorescent_pausedRef = useRef(false);
   const fluorescent_pauseTimeRef = useRef(0);
   const fluorescent_pauseOffsetRef = useRef(0);
+  const fluorescent_mouseTargetRef = useRef({ x: 0, y: 0, active: 0 });
+  const fluorescent_trailRef = useRef(
+    Array.from({ length: 4 }, () => ({ x: 0, y: 0, power: 0 })),
+  );
 
   // init webgl canvas, render loop, and pause when menu opens
   useEffect(() => {
@@ -155,6 +187,16 @@ export default function Fluorescent({ className = "" }) {
       "u_resolution",
     );
     const fluorescent_timeLocation = gl.getUniformLocation(program, "u_time");
+    const fluorescent_trailLocations = [
+      gl.getUniformLocation(program, "u_trail0"),
+      gl.getUniformLocation(program, "u_trail1"),
+      gl.getUniformLocation(program, "u_trail2"),
+      gl.getUniformLocation(program, "u_trail3"),
+    ];
+    const fluorescent_trailPowerLocation = gl.getUniformLocation(
+      program,
+      "u_trailPower",
+    );
 
     const fluorescent_buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, fluorescent_buffer);
@@ -213,6 +255,27 @@ export default function Fluorescent({ className = "" }) {
     );
     window.addEventListener("pageshow", fluorescent_scheduleResize);
 
+    function fluorescent_handlePointerMove(event) {
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+
+      const x = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+      const y = ((event.clientY - rect.top) / rect.height - 0.5) * -2;
+
+      fluorescent_mouseTargetRef.current.x = fluorescent_clamp(-1, 1, x);
+      fluorescent_mouseTargetRef.current.y = fluorescent_clamp(-1, 1, y);
+      fluorescent_mouseTargetRef.current.active = 1;
+    }
+
+    function fluorescent_handlePointerLeave() {
+      fluorescent_mouseTargetRef.current.active = 0;
+    }
+
+    window.addEventListener("pointermove", fluorescent_handlePointerMove, {
+      passive: true,
+    });
+    window.addEventListener("pointerleave", fluorescent_handlePointerLeave);
+
     fluorescent_resize();
     fluorescent_startTimeRef.current = performance.now() / 1000;
 
@@ -256,6 +319,15 @@ export default function Fluorescent({ className = "" }) {
         performance.now() / 1000 -
         fluorescent_startTimeRef.current -
         fluorescent_pauseOffsetRef.current;
+      const target = fluorescent_mouseTargetRef.current;
+      const trail = fluorescent_trailRef.current;
+      trail.forEach((point, index) => {
+        const ease = 0.16 - index * 0.026;
+        const source = index === 0 ? target : trail[index - 1];
+        point.x += (source.x - point.x) * ease;
+        point.y += (source.y - point.y) * ease;
+        point.power += (target.active - point.power) * (0.075 - index * 0.009);
+      });
 
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.useProgram(program);
@@ -273,6 +345,17 @@ export default function Fluorescent({ className = "" }) {
 
       gl.uniform2f(fluorescent_resolutionLocation, canvas.width, canvas.height);
       gl.uniform1f(fluorescent_timeLocation, currentTime);
+      fluorescent_trailLocations.forEach((location, index) => {
+        const point = trail[index];
+        gl.uniform2f(location, point.x, point.y);
+      });
+      gl.uniform4f(
+        fluorescent_trailPowerLocation,
+        trail[0].power,
+        trail[1].power * 0.88,
+        trail[2].power * 0.68,
+        trail[3].power * 0.5,
+      );
 
       gl.drawArrays(gl.TRIANGLES, 0, 6);
 
@@ -297,6 +380,8 @@ export default function Fluorescent({ className = "" }) {
         fluorescent_scheduleResize,
       );
       window.removeEventListener("pageshow", fluorescent_scheduleResize);
+      window.removeEventListener("pointermove", fluorescent_handlePointerMove);
+      window.removeEventListener("pointerleave", fluorescent_handlePointerLeave);
       gl.deleteBuffer(fluorescent_buffer);
       gl.deleteProgram(program);
       gl.deleteShader(vs);

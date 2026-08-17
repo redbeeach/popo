@@ -30,7 +30,7 @@ const OLD_TEAM = [
   },
 ];
 
-const TEAM = [
+const LEGACY_TEAM = [
   {
     index: "[001]",
     title: "Design Check",
@@ -65,6 +65,41 @@ const TEAM = [
   },
 ];
 
+const TEAM = [
+  {
+    index: "[001]",
+    title: "CMS Build",
+    description:
+      "그누보드(GB5/GB7) 기반 테마·스킨을 처음부터 설계하고, 클라이언트별 요구사항에 맞게 구조를 짭니다. 가비아·카페24 등 실서버 환경까지 고려해 설계합니다.",
+    stat: "01",
+    statLabel: "CMS Build",
+  },
+  {
+    index: "[002]",
+    title: "Backend Logic",
+    description:
+      "PHP·MySQL 기반 게시판, 회원관리, 관리자 페이지 등 실제 동작하는 기능을 구현합니다. 운영 중 발생하는 오류와 예외 케이스까지 대응합니다.",
+    stat: "02",
+    statLabel: "Backend Logic",
+  },
+  {
+    index: "[003]",
+    title: "SEO Structure",
+    description:
+      "URL 리다이렉트, sitemap 자동화, 구조화 데이터(JSON-LD)까지 검색엔진이 읽는 방식으로 설계합니다. YMYL(의료) 사이트 기준의 E-E-A-T 신호까지 관리합니다.",
+    stat: "03",
+    statLabel: "SEO Structure",
+  },
+  {
+    index: "[004]",
+    title: "Interaction",
+    description:
+      "GSAP·Swiper.js 기반 스크롤, 호버, 슬라이드 등 사용자가 체감하는 디테일을 구현합니다. 디바이스별 반응 속도와 자연스러움까지 다듬습니다.",
+    stat: "04",
+    statLabel: "Interaction",
+  },
+];
+
 export default function Team() {
   const sectionRef = useRef(null);
   const cardsRef = useRef([]);
@@ -79,7 +114,7 @@ export default function Team() {
 
     function positionCards(progress = 0) {
       const isMobile = window.innerWidth < 900;
-      const cardSpacing = isMobile ? 340 : 700;
+      const cardSpacing = isMobile ? 320 : 620;
       const cardStartProgress = 0.18;
       const cardProgress = gsap.utils.clamp(
         0,
@@ -91,8 +126,8 @@ export default function Team() {
       const travel =
         window.innerWidth * (isMobile ? 1.05 : 1.22) +
         cardSpacing * (cards.length - 1);
-      const topRowY = isMobile ? -105 : -115;
-      const bottomRowY = isMobile ? 75 : 95;
+      const topRowY = isMobile ? -150 : -180;
+      const bottomRowY = isMobile ? 20 : 20;
 
       cards.forEach((card, i) => {
         if (!card) return;
@@ -147,17 +182,6 @@ export default function Team() {
         </Copy>
       </div>
 
-      <div className="team-footer">
-        <div className="container">
-          <Copy trigger=".team">
-            <p className="mono">Roster Verified</p>
-          </Copy>
-          <Copy trigger=".team">
-            <p className="mono">Defectors: None</p>
-          </Copy>
-        </div>
-      </div>
-
       <div className="cards">
         {TEAM.map((member, i) => (
           <div
@@ -173,7 +197,6 @@ export default function Team() {
                 </div>
                 <p className="card-description">{member.description}</p>
                 <div className="card-stat">
-                  <p>{member.stat}</p>
                   <span>{member.statLabel}</span>
                 </div>
               </div>

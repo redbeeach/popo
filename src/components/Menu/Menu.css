@@ -1,6 +1,6 @@
 nav {
   position: fixed;
-  top: 0;
+  top: 0.85rem;
   left: 0;
   width: 100%;
   will-change: transform;
@@ -9,71 +9,149 @@ nav {
 }
 
 .nav-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 1.5rem;
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border-radius: 6px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: start;
+  padding: 0.85rem 1.5rem;
+  background: transparent;
+  backdrop-filter: none;
+  border-radius: 0;
   z-index: 200;
   transition:
-    background-color 0.3s ease,
-    backdrop-filter 0.3s ease;
+    color 0.3s ease,
+    opacity 0.3s ease;
 }
 
 .nav-container > div {
-  flex: 1;
+  min-width: 0;
 }
 
-.nav-cta {
+.nav-brand,
+.nav-actions {
   display: flex;
   align-items: center;
 }
 
-nav .nav-cta .btn,
-nav .nav-toggler .btn {
-  display: inline-flex;
-  align-items: center;
-  width: max-content;
-  min-height: calc(1rem + 0.65rem * 2 + 2px);
-  cursor: pointer;
+.nav-brand a,
+.nav-links a,
+.nav-actions a,
+.nav-toggler {
+  color: rgba(247, 245, 240, 0.78);
   text-decoration: none;
+  transition: color 0.25s ease, opacity 0.25s ease;
 }
 
-nav .nav-toggler .btn {
-  gap: 1rem;
+.nav-brand a:hover,
+.nav-links a:hover,
+.nav-actions a:hover,
+.nav-toggler:hover {
+  color: var(--base-100);
 }
 
-.nav-logo {
+.nav-brand a {
   position: relative;
-  width: 3.5rem;
-  object-fit: contain;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform: translateY(0.1rem);
-  transition: opacity 0.3s ease;
+  display: inline-block;
+  min-width: 5.8rem;
+  min-height: 3.8rem;
 }
 
-.nav-logo img {
-  width: 3rem;
+.nav-brand a span {
+  display: inline-block;
+  font-family: var(--type-2);
+  font-size: clamp(1.35rem, 1.65vw, 2.15rem);
+  font-weight: 700;
+  line-height: 0.92;
+}
+
+.nav-brand-full,
+.nav-brand-compact,
+.nav-links {
+  transition:
+    opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-brand-compact {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.55rem);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.25rem, 3vw, 3rem);
+  padding-top: 0.05rem;
+  filter: blur(0);
+  transform: translateX(0) translateY(0) scale(1);
+  transform-origin: right center;
+  will-change: transform, opacity, filter;
+}
+
+.nav-actions {
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(1.25rem, 2.5vw, 2.75rem);
+  padding-top: 0.05rem;
+}
+
+nav:not(.top) .nav-brand-full {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-0.55rem);
+}
+
+nav:not(.top) .nav-brand-compact {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+nav:not(.top) .nav-links {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  filter: blur(5px);
+  transform: translateX(9rem) translateY(-0.15rem) scale(0.94);
+}
+
+.nav-toggler {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  color: rgba(247, 245, 240, 0.78);
+  font-family: inherit;
+}
+
+.nav-hover-scramble {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.nav-hover-scramble .word,
+.nav-hover-scramble .char {
+  display: inline-block;
 }
 
 nav a {
   color: var(--base-100);
 }
 
-nav .nav-toggler {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
 nav .nav-toggler-hamburger {
   position: relative;
-  width: 1.5rem;
-  height: 1rem;
+  width: 1.35rem;
+  height: 0.75rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -85,17 +163,8 @@ nav .nav-toggler-hamburger span {
   position: relative;
   width: 100%;
   height: 1.5px;
-  background-color: var(--base-100);
+  background-color: currentColor;
   will-change: transform;
-}
-
-nav.top .nav-container {
-  background-color: rgba(255, 255, 255, 0);
-  backdrop-filter: blur(0px);
-}
-
-nav.top .nav-container .nav-logo {
-  opacity: 0;
 }
 
 .nav-overlay {
@@ -174,13 +243,27 @@ nav.top .nav-container .nav-logo {
 }
 
 @media (max-width: 1000px) {
+  nav {
+    top: 0.5rem;
+  }
+
+  .nav-container {
+    grid-template-columns: 1fr auto;
+    padding: 0.75rem 1rem;
+  }
+
+  .nav-brand a {
+    min-height: 3.4rem;
+  }
+
+  .nav-links,
+  .nav-connect {
+    display: none;
+  }
+
   .nav-overlay .nav-items {
     width: 100%;
     transform: translate(0%, -50%);
-  }
-
-  .nav-logo {
-    display: none;
   }
 
   .nav-overlay .nav-items .nav-item a {

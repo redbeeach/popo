@@ -34,8 +34,8 @@ const Connect = () => {
         <div className="contact-copy-footer">
           <Copy animateOnScroll={false} variant="flicker" delay={1}>
             <div className="container">
-              <p className="mono">&copy; 2025 Deadlock Inc.</p>
-              <p className="mono">Developed by Codegrid</p>
+              <p className="mono">2026 Yunhongbi Portfolio</p>
+              <p className="mono">Developed by Yunhongbi</p>
             </div>
           </Copy>
         </div>
